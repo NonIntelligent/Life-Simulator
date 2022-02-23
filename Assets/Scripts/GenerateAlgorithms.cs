@@ -34,6 +34,42 @@ public class GenerateAlgorithms
 		arr[x, z] = avg;
 	}
 
+	static void SquareStepWrap(float[,] arr, int x, int z, int reach, int maxSize, float randMax) {
+		float avg = 0f;
+
+		if (x - reach >= 0) {
+			avg += arr[x - reach, z];
+		}
+		else {
+			avg += arr[maxSize - reach, z];
+		}
+
+		if (x + reach < maxSize) {
+			avg += arr[x + reach, z];
+		}
+		else {
+			avg += arr[0 + reach, z];
+		}
+
+		if (z - reach >= 0) {
+			avg += arr[x, z - reach];
+		}
+		else {
+			avg += arr[x, maxSize - reach];
+		}
+
+		if (z + reach < maxSize) {
+			avg += arr[x, z + reach];
+		}
+		else {
+			avg += arr[x, 0 + reach];
+		}
+
+		avg /= 4;
+		avg += Random.Range(-randMax, randMax);
+		arr[x, z] = avg;
+	}
+
 	static void DiamondStep(float[,] arr, int x, int z, int reach, int maxSize, float randMax) {
 		float avg = 0f;
 		// Check if the point to sample is within bounds of the array
