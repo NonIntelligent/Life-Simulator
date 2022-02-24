@@ -51,6 +51,9 @@ public class CreatureAI : MonoBehaviour
 
     private void OnDrawGizmos() {
         Gizmos.color = Color.cyan;
-        if (agent) Gizmos.DrawSphere(agent.destination, 0.5f);
+        if (agent) { 
+            Gizmos.DrawSphere(agent.destination, 0.5f);
+            Gizmos.DrawLine(transform.position, agent.destination);
+        }
     }
 }
