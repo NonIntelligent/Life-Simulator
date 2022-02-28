@@ -16,7 +16,7 @@ public class Attributes
     float size; // as radius in meters
 
     // Maximum stats derived from attributes
-    float maxHealth;
+    public float maxHealth;
     float maxSaturation;
     float maxEnergy;
 

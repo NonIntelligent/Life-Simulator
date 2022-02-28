@@ -23,7 +23,7 @@ public class CreatureManager : MonoBehaviour
         
     }
 
-    public void spawnCreatures(int numCreatures, int numFamilies) {
+    public List<GameObject> spawnCreatures(int numCreatures, int numFamilies) {
         // Create creatures to manage
         Vector3 position = spawnCentre.position + Random.insideUnitSphere * spawnRadius;
         NavMeshHit ray;
@@ -43,5 +43,8 @@ public class CreatureManager : MonoBehaviour
             }
         }
 
+        return creatures;
     }
+
+
 }

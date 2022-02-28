@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class CreatureControl : MonoBehaviour
 {
     Genetics genetics;
-    Attributes attributes;
+    public Attributes attributes;
     BoxCollider coll;
+    NavMeshAgent agent;
 
     public GameObject contextMenu;
 
@@ -16,12 +18,19 @@ public class CreatureControl : MonoBehaviour
         genetics = new Genetics();
         attributes = new Attributes(genetics);
         coll = GetComponent<Collider>() as BoxCollider;
+        agent = GetComponent<NavMeshAgent>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        attributes.health -= 10f * Time.deltaTime;
+    }
 
+    public void UpdateSpeed(float speed)
+    {
+        agent.speed = speed;
+        agent.acceleration = speed / 2f;
     }
 
     void OnMouseDown() {

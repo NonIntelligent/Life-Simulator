@@ -30,7 +30,7 @@ public class FuzzyDefinitions : MonoBehaviour
             curve.RemoveKey(i);
         }
 
-        foreach(Vector2 key in keyPositions)
+        foreach (Vector2 key in keyPositions)
         {
             curve.AddKey(key.x, key.y);
         }
@@ -52,7 +52,7 @@ public class FuzzyDefinitions : MonoBehaviour
 
         for (int i = 0; i < 10000; i++)
         {
-            a = Mathf.Sin(inputs[i] + Mathf.PI / 2f);
+            a = Mathf.Cos(inputs[i]);
             b = curve.Evaluate(inputs[i]);
 
             accuracy.Add(Mathf.Abs((b - a)) / a);
@@ -69,4 +69,10 @@ public class FuzzyDefinitions : MonoBehaviour
 
         return (1 - sum) * 100.0;
     }
+
+    public float[] EvaluateHealth(float health)
+    {
+        return new float[] { health_Healthy.Evaluate(health), health_Hurt.Evaluate(health), health_Critical.Evaluate(health) };
+    }
+
 }
