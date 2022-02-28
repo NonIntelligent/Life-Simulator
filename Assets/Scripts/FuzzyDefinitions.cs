@@ -13,16 +13,8 @@ public class FuzzyDefinitions : MonoBehaviour
 
     void Start()
     {
-        for(int i = 0; i < health_Hurt.length; i++)
-        {
-            health_Hurt.RemoveKey(i);
-        }
 
-        Vector2[] keys = new Vector2[] { new Vector2(0.5f, 0f), new Vector2(1.0f, 0.25f), new Vector2(1.207f, 0.5f),
-                                         new Vector2(1.366f, 0.75f), new Vector2(0f, 0.25f), new Vector2(-0.207f, 0.5f),
-                                         new Vector2(-0.366f, 0.75f), new Vector2(1.5f, 1f), new Vector2(-0.5f, 1f) };
-
-        CurveBuilder(health_Hurt, keys);
+        Debug.Log(TestAccuracy(health_Hurt));
 
     }
 
@@ -43,5 +35,38 @@ public class FuzzyDefinitions : MonoBehaviour
             curve.AddKey(key.x, key.y);
         }
 
+    }
+
+    public double TestAccuracy(AnimationCurve curve)
+    {
+        List<float> inputs = new List<float>();
+        List<double> accuracy = new List<double>();
+
+        for (int i = 0; i < 10000; i++)
+        {
+            inputs.Add(Random.Range(-1000f, 1000f));
+        }
+
+        float a = 0.0f;
+        float b = 0.0f;
+
+        for (int i = 0; i < 10000; i++)
+        {
+            a = Mathf.Sin(inputs[i] + Mathf.PI / 2f);
+            b = curve.Evaluate(inputs[i]);
+
+            accuracy.Add(Mathf.Abs((b - a)) / a);
+        }
+
+        double sum = 0;
+
+        foreach (double num in accuracy)
+        {
+            sum += num;
+        }
+
+        sum /= accuracy.Count;
+
+        return (1 - sum) * 100.0;
     }
 }
