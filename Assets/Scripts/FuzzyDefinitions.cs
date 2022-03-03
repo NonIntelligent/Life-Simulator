@@ -14,8 +14,6 @@ public class FuzzyDefinitions : MonoBehaviour
     void Start()
     {
 
-        Debug.Log(TestAccuracy(health_Hurt));
-
     }
 
     void Update()

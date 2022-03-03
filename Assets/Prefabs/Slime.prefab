@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 5393006482357102300}
   - component: {fileID: 6396163501993645232}
   - component: {fileID: 712953187357450024}
+  - component: {fileID: 5309965712490822170}
   m_Layer: 9
   m_Name: Slime
   m_TagString: Creature
@@ -138,6 +139,154 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84f5273bf6088ef428fbd97189aa1d1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  contextMenu: {fileID: 0}
+--- !u!114 &5309965712490822170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6675452660339312860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9eb820f3fb9b9294fbcfb68eb1afbbe7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health_Healthy:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.6
+      value: 0
+      inSlope: 0.84667593
+      outSlope: 0.84667593
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.2083333
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  health_Hurt:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.3
+      value: 0
+      inSlope: 9.259266
+      outSlope: 9.259266
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.327
+      value: 0.25
+      inSlope: 8.535882
+      outSlope: 8.535882
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.359
+      value: 0.5
+      inSlope: 6.9550295
+      outSlope: 6.9550295
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.4
+      value: 0.75
+      inSlope: 4.29878
+      outSlope: 4.29878
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.5
+      value: 1
+      inSlope: 0.00000035762787
+      outSlope: 0.00000035762787
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.6
+      value: 0.75
+      inSlope: -4.2987843
+      outSlope: -4.2987843
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.641
+      value: 0.5
+      inSlope: -6.9550333
+      outSlope: -6.9550333
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.673
+      value: 0.25
+      inSlope: -8.535877
+      outSlope: -8.535877
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.7
+      value: 0
+      inSlope: -9.259255
+      outSlope: -9.259255
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  health_Critical:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.4
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &6675452661020721138
 PrefabInstance:
   m_ObjectHideFlags: 0

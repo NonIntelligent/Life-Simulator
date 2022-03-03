@@ -10,7 +10,8 @@ public class CreatureControl : MonoBehaviour
     BoxCollider coll;
     NavMeshAgent agent;
 
-    public GameObject contextMenu;
+    GameObject contextMenu;
+    GameObject contextCanvas;
 
     // Start is called before the first frame update
     void Start()
@@ -19,6 +20,8 @@ public class CreatureControl : MonoBehaviour
         attributes = new Attributes(genetics);
         coll = GetComponent<Collider>() as BoxCollider;
         agent = GetComponent<NavMeshAgent>();
+        contextMenu = GameObject.FindGameObjectWithTag("CreatureContext");
+        contextCanvas = contextMenu.transform.Find("Canvas").gameObject;
     }
 
     // Update is called once per frame
@@ -34,7 +37,7 @@ public class CreatureControl : MonoBehaviour
     }
 
     void OnMouseDown() {
-        contextMenu.SetActive(true);
+        contextCanvas.SetActive(true);
     }
 
     void OnDrawGizmos() {

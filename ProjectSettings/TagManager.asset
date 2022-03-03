@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Creature
   - Action
+  - CreatureContext
   layers:
   - Default
   - TransparentFX
