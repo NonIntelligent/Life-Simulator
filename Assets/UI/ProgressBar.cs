@@ -32,9 +32,9 @@ public class ProgressBar : MonoBehaviour
         mask.color = color;
     }
 
-    public void UpdateCurrent(int value)
+    public void UpdateCurrent(float percentage)
     {
-        float newCurrent = Mathf.Clamp(value, 0f, maximum);
+        float newCurrent = Mathf.Clamp(percentage, 0f, 1f) * maximum;
         current = (int) newCurrent;
     }
 }
