@@ -15,7 +15,7 @@ public class ProgressBar : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        if (maximum <= 0) maximum = 100;
     }
 
     // Update is called once per frame
@@ -30,5 +30,11 @@ public class ProgressBar : MonoBehaviour
         mask.fillAmount = fillAmount;
 
         mask.color = color;
+    }
+
+    public void UpdateCurrent(int value)
+    {
+        float newCurrent = Mathf.Clamp(value, 0f, maximum);
+        current = (int) newCurrent;
     }
 }

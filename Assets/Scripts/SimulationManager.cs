@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Spawner))]
 public class SimulationManager : MonoBehaviour
@@ -34,5 +35,16 @@ public class SimulationManager : MonoBehaviour
             else if (values[2] > values[1]) control.UpdateSpeed(1f);
 
         }
+    }
+
+    public void ChangeSimulationSpeed(float multiplier)
+    {
+        float scale = multiplier < 0f ? 0f : multiplier;
+        Time.timeScale = scale;
+    }
+
+    public void CloseGame()
+    {
+        Application.Quit();
     }
 }
