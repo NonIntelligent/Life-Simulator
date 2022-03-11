@@ -10,6 +10,9 @@ public class CreatureControl : MonoBehaviour
     BoxCollider coll;
     NavMeshAgent agent;
 
+    Genetics[] grandParents = new Genetics[4];
+    Genetics[] parents = new Genetics[2];
+
     GameObject contextMenu;
     GameObject contextCanvas;
 
@@ -34,6 +37,11 @@ public class CreatureControl : MonoBehaviour
     {
         agent.speed = speed;
         agent.acceleration = speed / 2f;
+    }
+
+    void SetupParentsAndGrandParents()
+    {
+
     }
 
     void OnMouseDown() {

@@ -10,36 +10,60 @@ using UnityEngine;
 /// Mutation factor is determined per gene based on parents genes (lowers chance) and their activity levels (alters mutation range)
 public class Genetics
 {
-    
-    float _size;
+    GeneFactor<float> athleticism;
+    GeneFactor<float> offense;
+    GeneFactor<float> defense;
+    GeneFactor<float> size;
+
+    // Randomly generate all genes
+    public Genetics()
+    {
+
+    }
+
+    // Generate genes based on parents (limits mutation chance and mutation range)
+    public Genetics(Genetics[] parents, Genetics[] grandParents)
+    {
+
+    }
 }
 
-public class GeneFactor
+public class GeneFactor<T>
 {
-    string name;
-    Pair<float, GENES> size;
+    public readonly Pair<T, GENES> gene;
+
+    public int mutationRange_higher;
+    public int mutationRange_lower;
+    public float mutationRate_base; // Volatility of the gene (Frequency of change between generations)
+
+    public float experience; // Affects the +-chance of mutation for the next generation as well as mutation range
+
+    public GeneFactor(int mutationHigher, int mutationLower, float baseMutationRate, T value)
+    {
+        gene = new Pair<T,GENES>(value, GENES.GREATER);
+        experience = 0f;
+    }
+
 }
 
 public class Pair<T, U>
 {
-    readonly T first;
-    readonly U second;
+    public readonly T first;
+    public readonly U second;
 
-    Pair(T item1, U item2)
+    public Pair(T item1, U item2)
     {
         first = item1;
         second = item2;
     }
 
-    public T getFirst() { return first; }
-    public U getSecond() { return second; }
 }
 
 public enum GENES
 {
-    GREATER,
-    POSITIVE,
-    NEUTRAL,
-    NEGATIVE,
-    DISORDER
+    GREATER = 4,
+    POSITIVE = GREATER - 1,
+    NEUTRAL = POSITIVE - 1,
+    NEGATIVE = NEUTRAL - 1,
+    DISORDER = NEGATIVE - 1
 };
