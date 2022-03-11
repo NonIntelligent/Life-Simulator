@@ -7,13 +7,22 @@ using UnityEngine;
 /// </summary>
 public class FuzzyDefinitions : MonoBehaviour
 {
+    readonly Attributes attributes;
+
     public AnimationCurve health_Healthy;
     public AnimationCurve health_Hurt;
     public AnimationCurve health_Critical;
 
+    public AnimationCurve hunger_satiated;
+    public AnimationCurve hunger_starving;
+
+    public AnimationCurve energy_priority;
+
+
     void Start()
     {
-
+        // Future work.
+        // Alter curves based on attributes and traits
     }
 
     void Update()
