@@ -27,7 +27,7 @@ public class CreatureAI : MonoBehaviour
     }
 
     IEnumerator RunAI() {
-        yield return new WaitForSeconds(coroutineDelay);
+        yield return new WaitForSeconds(coroutineDelay * Time.timeScale);
 
         moveRandomly();
 
