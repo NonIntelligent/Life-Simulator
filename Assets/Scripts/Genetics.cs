@@ -93,20 +93,20 @@ public class Genetics
 
             GenerateFactorFromGenetics(grandParents, 4, 0.2f, agression, GENOME.AGRESSION);
         }
-
         
     }
 
     GeneFactor<T> GenerateRandomFactor<T>(GENOME genome)
     {
         GenomeConstant genomeConstant = genome_Values[genome];
-
+        
         int dnaSelection = UnityEngine.Random.Range(0, (int)DNA.NUM_DNA - 1);
 
         T[] values = (T[]) genomeConstant.dnaValuesArray;
         T val = values[dnaSelection];
+
         // Add variance to floating point values by +-10% 
-        if (typeof(T) == typeof(float)) {
+        if (val is float) {
             val = (T)(object) ((float)(object)val * Random.Range(0.9f, 1.1f));
         }
 
@@ -169,6 +169,60 @@ public class Genetics
 
         }
 
+    }
+
+    void GenerateAllFactorsFromAllGenetics(Genetics[] parents, float influence_1st, Genetics[] grandParents, float influence_2nd) {
+        // Check if factors have already been created, if so then alter genes rather than generate new ones
+        GenomeConstant genomeConstant = genome_Values[GENOME.ATHLETICISM];
+        float[] dnaValues = (float[])genomeConstant.dnaValuesArray;
+
+        if (athleticism == null) athleticism = new GeneFactor<float>(dnaValues[(int)DNA.NEUTRAL], DNA.NEUTRAL);
+
+        int[] randomRangeList = new int[300];
+        int itemsToFillFromParents = (int)(influence_1st * randomRangeList.Length);
+        int itemsToFillFromGrandParents = (int)(influence_2nd * randomRangeList.Length);
+
+        DNA parent1Dna = parents[0].athleticism.dna;
+        DNA parent2Dna = parents[1].athleticism.dna;
+
+        DNA grandParent1Dna = grandParents[0].athleticism.dna;
+        DNA grandParent2Dna = grandParents[1].athleticism.dna;
+        DNA grandParent3Dna = grandParents[2].athleticism.dna;
+        DNA grandParent4Dna = grandParents[3].athleticism.dna;
+        DNA myDna = athleticism.dna;
+
+        // Creates a weighted array based on the influence values. e.g. an influence value of 0.8 will fill 80% of the array with the parent's dna
+        // If influence is >= 1.0 then the genetics of the grandparents and self are not considered.
+        for (int i = 0; i < itemsToFillFromParents; i += 2)
+        {
+            randomRangeList[i] = (int)parent1Dna;
+            randomRangeList[i + 1] = (int)parent2Dna;
+        }
+
+        int fillCap = itemsToFillFromParents + itemsToFillFromGrandParents < randomRangeList.Length - 4 ? itemsToFillFromParents + itemsToFillFromGrandParents : 0;
+
+        for (int i = itemsToFillFromParents; i < itemsToFillFromParents + itemsToFillFromGrandParents; i += 4)
+        {
+            randomRangeList[i] = (int)grandParent1Dna;
+            randomRangeList[i + 1] = (int)grandParent2Dna;
+            randomRangeList[i + 2] = (int)grandParent3Dna;
+            randomRangeList[i + 3] = (int)grandParent4Dna;
+        }
+
+        for (int i = itemsToFillFromParents + itemsToFillFromGrandParents; i < randomRangeList.Length; i++)
+        {
+            randomRangeList[i] = (int)myDna;
+        }
+
+        // Choose gene from list randomly
+        DNA randomDna = (DNA)Random.Range(0, randomRangeList.Length);
+
+        for (int i = 0; i < 5; i += 2)
+        {
+
+            // Determine mutation rate higher and lower
+
+        }
     }
 
     Dictionary<GENOME, GenomeConstant> CreateGenomeValueLookup() {
