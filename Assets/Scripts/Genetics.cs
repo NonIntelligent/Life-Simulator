@@ -110,7 +110,10 @@ public class Genetics
 
     void GenerateFactorFromParents<T>(Genetics[] parents, float influence_1st, GENOME genome)
     {
-
+        int genomeIndex = (int)genome;
+        int[] randomRangeList = new int[100];
+        DNA[] dnaList = new DNA[2];
+        DNA myDna = ((GeneFactor<T>)geneFactors[genomeIndex]).dna;
     }
 
     void GenerateFactorFromAllGenetics<T>(Genetics[] parents, float influence_1st, Genetics[] grandParents, float influence_2nd, GENOME genome)
@@ -118,16 +121,25 @@ public class Genetics
         int genomeIndex = (int)genome;
         int[] randomRangeList = new int[300];
         DNA[] dnaList = new DNA[6];
+        GeneFactor<T>[] parentFactors = new GeneFactor<T>[6];
         DNA myDna = ((GeneFactor<T>)geneFactors[genomeIndex]).dna;
+
 
         foreach (GeneFactor<T> factor in geneFactors)
         {
-            dnaList[0] = ((GeneFactor<T>)parents[0].geneFactors[genomeIndex]).dna;
-            dnaList[1] = ((GeneFactor<T>)parents[1].geneFactors[genomeIndex]).dna;
-            dnaList[2] = ((GeneFactor<T>)grandParents[0].geneFactors[genomeIndex]).dna;
-            dnaList[3] = ((GeneFactor<T>)grandParents[1].geneFactors[genomeIndex]).dna;
-            dnaList[4] = ((GeneFactor<T>)grandParents[2].geneFactors[genomeIndex]).dna;
-            dnaList[5] = ((GeneFactor<T>)grandParents[3].geneFactors[genomeIndex]).dna;
+            parentFactors[0] = (GeneFactor<T>)parents[0].geneFactors[genomeIndex];
+            parentFactors[1] = (GeneFactor<T>)parents[1].geneFactors[genomeIndex];
+            parentFactors[2] = (GeneFactor<T>)grandParents[0].geneFactors[genomeIndex];
+            parentFactors[3] = (GeneFactor<T>)grandParents[1].geneFactors[genomeIndex];
+            parentFactors[4] = (GeneFactor<T>)grandParents[2].geneFactors[genomeIndex];
+            parentFactors[5] = (GeneFactor<T>)grandParents[3].geneFactors[genomeIndex];
+
+            dnaList[0] = parentFactors[0].dna;
+            dnaList[1] = parentFactors[1].dna;
+            dnaList[3] = parentFactors[2].dna;
+            dnaList[2] = parentFactors[3].dna;
+            dnaList[4] = parentFactors[4].dna;
+            dnaList[5] = parentFactors[5].dna;
 
             // Creates a weighted array based on the influence values. e.g. an influence value of 0.8 will fill 80% of the array with the parent's dna
             // If influence is >= 1.0 then the genetics of the grandparents and self are not considered.
@@ -136,10 +148,27 @@ public class Genetics
             // Choose gene from list randomly
             DNA randomDna = (DNA)Random.Range(0, randomRangeList.Length);
 
-            for (int i = 0; i < 5; i += 2)
-            {
+            // Adjust mutation ranges based on experience
+            int mutationHigh = genome_Values[genome].mutationRange_higher;
+            int mutationLow = genome_Values[genome].mutationRange_lower;
+            float mutationChance = genome_Values[genome].mutationRateBase;
 
-            }
+            // Sum experience from parents and is modified by influence
+            float experienceSum = (parentFactors[0].experience + parentFactors[1].experience) * influence_1st + (parentFactors[2].experience
+                                  + parentFactors[3].experience + parentFactors[4].experience + parentFactors[5].experience) * influence_2nd;
+
+            // Every 100 exp the high range is increased and every 200, the low range is decreased.
+            // The chance of mutation increases with abnormally high experience. It may decrease depending the number of the exact same gene in the dnaList.
+            mutationHigh += (int)(experienceSum / 100f);
+            mutationLow -= (int)(experienceSum / 200f);
+            mutationChance += (experienceSum / 1000f) * 0.1f; // 10% per 1000 exp
+
+            // Alters mutation chance by +- 10%
+            int dnaCount = randomRangeList.Count(d => d == (int)randomDna);
+            mutationChance += (((float) dnaCount / randomRangeList.Length) - 0.5f) * 0.2f;
+
+            // Roll the dice to see if gene mutates as new final output
+            
         }
     }
 
@@ -190,6 +219,40 @@ public class Genetics
 
     }
 
+    DNA MutateGene(GenomeConstant constant, float experienceSum, int[] randomDnaRange, DNA randomChosen)
+    {
+        DNA result = randomChosen;
+
+        // Adjust mutation ranges based on experience
+        int mutationHigh = constant.mutationRange_higher;
+        int mutationLow = constant.mutationRange_lower;
+        float mutationChance = constant.mutationRateBase;
+
+        // Every 100 exp the high range is increased and every 200, the low range is decreased.
+        // The chance of mutation increases with abnormally high experience. It may decrease depending the number of the exact same gene in the dnaList.
+        mutationHigh += (int)(experienceSum / 100f);
+        mutationLow -= (int)(experienceSum / 200f);
+        mutationChance += (experienceSum / 1000f) * 0.1f; // 10% per 1000 exp
+
+        // Alters mutation chance by +- 10%
+        int dnaCount = randomDnaRange.Count(d => d == (int)result);
+        mutationChance += (((float)dnaCount / randomDnaRange.Length) - 0.5f) * 0.2f;
+        mutationChance = Mathf.Clamp(mutationChance, 0f, 1f);
+
+        // Roll the dice to see if gene mutates as new final output
+        if(mutationChance >= Random.value)
+        {
+            // Adjust highs and lows to be appropriate and within bounds of the DNA Enum values
+            mutationHigh = System.Math.Max(0, (int)result - mutationHigh);
+            mutationLow = System.Math.Min((int)DNA.NUM_DNA - 1, (int)result + mutationLow);
+
+            result = (DNA)Random.Range(mutationHigh, mutationLow);
+
+        }
+
+        return result;
+    }
+
     void InitialiseAllGeneFactors()
     {
         geneFactors[(int)GENOME.ATHLETICISM] = GenerateRandomFactor<float>(GENOME.ATHLETICISM);
@@ -237,9 +300,9 @@ public class GeneFactor<T>
 readonly public struct GenomeConstant
 {
     public object dnaValuesArray { get; } // An array of any type i.e. float[] (cast object -> T[])
-    public float mutationRateBase {get; } // Volatility of the gene (Frequency of change between generations)
-    public int mutationRange_higher {get;} // How high the gene can mutate to a better version
-    public int mutationRange_lower {get;} // How low the gene can mutate to a worse version
+    public float mutationRateBase { get; } // Volatility of the gene (Frequency of change between generations)
+    public int mutationRange_higher { get;} // How high the gene can mutate to a better version
+    public int mutationRange_lower { get;} // How low the gene can mutate to a worse version
 
     public GenomeConstant(object arrayConstants, float mutationRate, int mutationRangeHigh, int mutationRangeLow) {
         dnaValuesArray = arrayConstants;
