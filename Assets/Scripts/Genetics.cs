@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq; // Used to cast enum into a list
 
 public enum DNA
 {
@@ -38,14 +39,7 @@ public class Genetics
     // Readonly dictionary used as a lookup table that supports multiple types
     static IReadOnlyDictionary<GENOME, GenomeConstant> genome_Values = null;
 
-    // Attribute genes
-    GeneFactor<float> athleticism;
-    GeneFactor<float> offense;
-    GeneFactor<float> defense;
-    GeneFactor<float> size;
-
-    // Behaviour genes
-    GeneFactor<float> agression;
+    ArrayList geneFactors = new ArrayList((int) GENOME.NUM_GENOMES);
 
     // Randomly generate all genes
     public Genetics()
@@ -58,41 +52,41 @@ public class Genetics
         }
 
         // get value assigned to genome from lookup table
-        athleticism = GenerateRandomFactor<float>(GENOME.ATHLETICISM);
-        offense = GenerateRandomFactor<float>(GENOME.OFFENSE);
-        defense = GenerateRandomFactor<float>(GENOME.DEFENSE);
-        size = GenerateRandomFactor<float>(GENOME.SIZE);
-
-        agression = GenerateRandomFactor<float>(GENOME.AGRESSION);
+        InitialiseAllGeneFactors();
     }
 
     // Generate genes based on parents (limits mutation chance and mutation range)
     public Genetics(Genetics[] parents, Genetics[] grandParents)
     {
+        InitialiseAllGeneFactors();
+
         // Create constant default values for the genomes for each DNA a single time
         if (genome_Values == null) {
             genome_Values = CreateGenomeValueLookup();
         }
 
+        // Invalid use of constructor, act as if default constructor was used
+        if (parents == null && grandParents == null) return;
+
         // Use parents genes to determine mutation rate, the range of mutation if successfull and the starting gene
-        if (parents != null) {
-            GenerateFactorFromGenetics(parents, 2, 0.8f, athleticism, GENOME.ATHLETICISM);
-            GenerateFactorFromGenetics(parents, 2, 0.8f, offense, GENOME.OFFENSE);
-            GenerateFactorFromGenetics(parents, 2, 0.8f, defense, GENOME.DEFENSE);
-            GenerateFactorFromGenetics(parents, 2, 0.8f, size, GENOME.SIZE);
+        if (grandParents == null) {
+            GenerateFactorFromParents<float>(parents, 0.9f, GENOME.ATHLETICISM);
+            GenerateFactorFromParents<float>(parents, 0.9f, GENOME.OFFENSE);
+            GenerateFactorFromParents<float>(parents, 0.9f, GENOME.DEFENSE);
+            GenerateFactorFromParents<float>(parents, 0.9f, GENOME.SIZE);
 
-            GenerateFactorFromGenetics(parents, 2, 0.8f, agression, GENOME.AGRESSION);
+            GenerateFactorFromParents<float>(parents, 0.9f, GENOME.AGRESSION);
+
+            return;
         }
 
-        // Use grandparents' genes to determine mutation 
-        if (grandParents != null) {
-            GenerateFactorFromGenetics(grandParents, 4, 0.2f, athleticism, GENOME.ATHLETICISM);
-            GenerateFactorFromGenetics(grandParents, 4, 0.2f, offense, GENOME.OFFENSE);
-            GenerateFactorFromGenetics(grandParents, 4, 0.2f, defense, GENOME.DEFENSE);
-            GenerateFactorFromGenetics(grandParents, 4, 0.2f, size, GENOME.SIZE);
+        // Use both parents and granparents genes to determine genetics
+        GenerateFactorFromAllGenetics<float>(parents, 0.7f, grandParents, 0.2f, GENOME.ATHLETICISM);
+        GenerateFactorFromAllGenetics<float>(parents, 0.7f, grandParents, 0.2f, GENOME.OFFENSE);
+        GenerateFactorFromAllGenetics<float>(parents, 0.7f, grandParents, 0.2f, GENOME.DEFENSE);
+        GenerateFactorFromAllGenetics<float>(parents, 0.7f, grandParents, 0.2f, GENOME.SIZE);
 
-            GenerateFactorFromGenetics(grandParents, 4, 0.2f, agression, GENOME.AGRESSION);
-        }
+        GenerateFactorFromAllGenetics<float>(parents, 0.7f, grandParents, 0.2f, GENOME.AGRESSION);
         
     }
 
@@ -100,7 +94,7 @@ public class Genetics
     {
         GenomeConstant genomeConstant = genome_Values[genome];
         
-        int dnaSelection = UnityEngine.Random.Range(0, (int)DNA.NUM_DNA - 1);
+        int dnaSelection = Random.Range(0, (int)DNA.NUM_DNA - 1);
 
         T[] values = (T[]) genomeConstant.dnaValuesArray;
         T val = values[dnaSelection];
@@ -114,115 +108,98 @@ public class Genetics
 
     }
 
-    void GenerateFactorFromGenetics<T>(Genetics[] genes, int length, float influence, GeneFactor<T> factor, GENOME genome) {
-        // Check if factors have already been created, if so then alter genes rather than generate new ones
-        GenomeConstant genomeConstant = genome_Values[genome];
-        T[] dnaValues = (T[]) genomeConstant.dnaValuesArray;
-
-        if (factor == null) factor = new GeneFactor<T>(dnaValues[(int) DNA.NEUTRAL], DNA.NEUTRAL);
-
-        int[] randomRangeList = new int[4];
-
-        for (int i = 0; i < length; i+=2) {
-            // Determine mutation rate higher and lower
-
-            DNA parent1Dna = genes[0].athleticism.dna;
-            DNA parent2Dna = genes[1].athleticism.dna;
-            DNA myDna = factor.dna;
-            float avg = ((float)parent1Dna + (float)parent2Dna) / 2f;
-        }
-    }
-
-    void GenerateAllFactorsFromGenetics(Genetics[] genes, int length, float influence) {
-        // Check if factors have already been created, if so then alter genes rather than generate new ones
-        GenomeConstant genomeConstant = genome_Values[GENOME.ATHLETICISM];
-        float[] dnaValues = (float[])genomeConstant.dnaValuesArray;
-
-        if (athleticism == null) athleticism = new GeneFactor<float>(dnaValues[(int)DNA.NEUTRAL], DNA.NEUTRAL);
-
-        int[] randomRangeList = new int[100];
-        int itemsToFillFromParents = (int) (influence * randomRangeList.Length);
-
-        DNA parent1Dna = genes[0].athleticism.dna;
-        DNA parent2Dna = genes[1].athleticism.dna;
-        DNA myDna = athleticism.dna;
-
-        // Determine starting gene by selecting randomly from this weighted list
-        for (int i = 0; i < itemsToFillFromParents; i+=2)
-        {
-            randomRangeList[i] = (int)parent1Dna;
-            randomRangeList[i + 1] = (int)parent2Dna;
-        }
-
-        for (int i = itemsToFillFromParents; i < randomRangeList.Length; i++)
-        {
-            randomRangeList[i] = (int)myDna;
-        }
-
-        // Choose gene from list randomly
-        DNA randomDna = (DNA) Random.Range(0, randomRangeList.Length);
-
-        for (int i = 0; i < length; i += 2)
-        {
-
-            // Determine mutation rate higher and lower
-
-        }
+    void GenerateFactorFromParents<T>(Genetics[] parents, float influence_1st, GENOME genome)
+    {
 
     }
 
-    void GenerateAllFactorsFromAllGenetics(Genetics[] parents, float influence_1st, Genetics[] grandParents, float influence_2nd) {
-        // Check if factors have already been created, if so then alter genes rather than generate new ones
-        GenomeConstant genomeConstant = genome_Values[GENOME.ATHLETICISM];
-        float[] dnaValues = (float[])genomeConstant.dnaValuesArray;
-
-        if (athleticism == null) athleticism = new GeneFactor<float>(dnaValues[(int)DNA.NEUTRAL], DNA.NEUTRAL);
-
+    void GenerateFactorFromAllGenetics<T>(Genetics[] parents, float influence_1st, Genetics[] grandParents, float influence_2nd, GENOME genome)
+    {
+        int genomeIndex = (int)genome;
         int[] randomRangeList = new int[300];
-        int itemsToFillFromParents = (int)(influence_1st * randomRangeList.Length);
-        int itemsToFillFromGrandParents = (int)(influence_2nd * randomRangeList.Length);
+        DNA[] dnaList = new DNA[6];
+        DNA myDna = ((GeneFactor<T>)geneFactors[genomeIndex]).dna;
 
-        DNA parent1Dna = parents[0].athleticism.dna;
-        DNA parent2Dna = parents[1].athleticism.dna;
+        foreach (GeneFactor<T> factor in geneFactors)
+        {
+            dnaList[0] = ((GeneFactor<T>)parents[0].geneFactors[genomeIndex]).dna;
+            dnaList[1] = ((GeneFactor<T>)parents[1].geneFactors[genomeIndex]).dna;
+            dnaList[2] = ((GeneFactor<T>)grandParents[0].geneFactors[genomeIndex]).dna;
+            dnaList[3] = ((GeneFactor<T>)grandParents[1].geneFactors[genomeIndex]).dna;
+            dnaList[4] = ((GeneFactor<T>)grandParents[2].geneFactors[genomeIndex]).dna;
+            dnaList[5] = ((GeneFactor<T>)grandParents[3].geneFactors[genomeIndex]).dna;
 
-        DNA grandParent1Dna = grandParents[0].athleticism.dna;
-        DNA grandParent2Dna = grandParents[1].athleticism.dna;
-        DNA grandParent3Dna = grandParents[2].athleticism.dna;
-        DNA grandParent4Dna = grandParents[3].athleticism.dna;
-        DNA myDna = athleticism.dna;
+            // Creates a weighted array based on the influence values. e.g. an influence value of 0.8 will fill 80% of the array with the parent's dna
+            // If influence is >= 1.0 then the genetics of the grandparents and self are not considered.
+            FillDnaArray(randomRangeList, dnaList, influence_1st, influence_2nd, myDna);
+
+            // Choose gene from list randomly
+            DNA randomDna = (DNA)Random.Range(0, randomRangeList.Length);
+
+            for (int i = 0; i < 5; i += 2)
+            {
+
+            }
+        }
+    }
+
+    void FillDnaArray(int[] output, DNA[] dnaList, float influenceA, DNA myDna) {
+        int itemsToFillFromParents = (int)(influenceA * output.Length);
+
+        // Creates a weighted array based on the influence values. e.g. an influence value of 0.8 will fill 80% of the array with the parent's dna
+        // If influence is >= 1.0 then the genetics of the self are not considered.
+        for (int i = 0; i < itemsToFillFromParents; i += 2)
+        {
+            output[i] = (int)dnaList[0];
+            output[i + 1] = (int)dnaList[1];
+        }
+
+        for (int i = itemsToFillFromParents; i < output.Length; i++)
+        {
+            output[i] = (int)myDna;
+        }
+    }
+
+    void FillDnaArray(int[] output, DNA[] dnaList, float influenceA, float influenceB, DNA myDna) {
+        int itemsToFillFromParents = (int)(influenceA * output.Length);
+        int itemsToFillFromGrandParents = (int)(influenceB * output.Length);
+        int totalItemsToFill = itemsToFillFromParents + itemsToFillFromGrandParents;
+
+        int fillCap = totalItemsToFill < output.Length - 4 ? totalItemsToFill : output.Length;
 
         // Creates a weighted array based on the influence values. e.g. an influence value of 0.8 will fill 80% of the array with the parent's dna
         // If influence is >= 1.0 then the genetics of the grandparents and self are not considered.
         for (int i = 0; i < itemsToFillFromParents; i += 2)
         {
-            randomRangeList[i] = (int)parent1Dna;
-            randomRangeList[i + 1] = (int)parent2Dna;
+            output[i] = (int)dnaList[0];
+            output[i + 1] = (int)dnaList[1];
         }
-
-        int fillCap = itemsToFillFromParents + itemsToFillFromGrandParents < randomRangeList.Length - 4 ? itemsToFillFromParents + itemsToFillFromGrandParents : 0;
-
-        for (int i = itemsToFillFromParents; i < itemsToFillFromParents + itemsToFillFromGrandParents; i += 4)
+        
+        for (int i = itemsToFillFromParents; i < fillCap; i += 4)
         {
-            randomRangeList[i] = (int)grandParent1Dna;
-            randomRangeList[i + 1] = (int)grandParent2Dna;
-            randomRangeList[i + 2] = (int)grandParent3Dna;
-            randomRangeList[i + 3] = (int)grandParent4Dna;
+            output[i] = (int)dnaList[2];
+            output[i + 1] = (int)dnaList[3];
+            output[i + 2] = (int)dnaList[4];
+            output[i + 3] = (int)dnaList[5];
         }
 
-        for (int i = itemsToFillFromParents + itemsToFillFromGrandParents; i < randomRangeList.Length; i++)
+        for (int i = fillCap; i < output.Length; i++)
         {
-            randomRangeList[i] = (int)myDna;
+            output[i] = (int)myDna;
         }
 
-        // Choose gene from list randomly
-        DNA randomDna = (DNA)Random.Range(0, randomRangeList.Length);
+    }
 
-        for (int i = 0; i < 5; i += 2)
-        {
+    void InitialiseAllGeneFactors()
+    {
+        geneFactors[(int)GENOME.ATHLETICISM] = GenerateRandomFactor<float>(GENOME.ATHLETICISM);
+        geneFactors[(int)GENOME.OFFENSE] = GenerateRandomFactor<float>(GENOME.OFFENSE);
+        geneFactors[(int)GENOME.DEFENSE] = GenerateRandomFactor<float>(GENOME.DEFENSE);
+        geneFactors[(int)GENOME.SIZE] = GenerateRandomFactor<float>(GENOME.SIZE);
 
-            // Determine mutation rate higher and lower
+        geneFactors[(int)GENOME.AGRESSION] = GenerateRandomFactor<float>(GENOME.AGRESSION);
 
-        }
+        geneFactors.TrimToSize();
     }
 
     Dictionary<GENOME, GenomeConstant> CreateGenomeValueLookup() {
