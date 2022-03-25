@@ -21,6 +21,7 @@ public class CreatureControl : MonoBehaviour
     {
         genetics = new Genetics();
         attributes = new Attributes(genetics);
+        transform.localScale = new Vector3(1f, 1f, 1f) * attributes.size;
         coll = GetComponent<Collider>() as BoxCollider;
         agent = GetComponent<NavMeshAgent>();
         contextMenu = GameObject.FindGameObjectWithTag("CreatureContext");

@@ -10,6 +10,8 @@ public class SimulationManager : MonoBehaviour
 
     List<GameObject> creatures;
 
+    bool gamePaused = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -39,9 +41,24 @@ public class SimulationManager : MonoBehaviour
         }
     }
 
-    public void ChangeSimulationSpeed(float multiplier)
+    public void PauseResumeGame()
     {
-        float scale = multiplier < 0f ? 0f : multiplier;
+        if (Time.timeScale <= 0f)
+        {
+            gamePaused = false;
+            Time.timeScale = 1f;
+        }
+        else
+        {
+            gamePaused = true;
+            Time.timeScale = 0f;
+        }
+    }
+
+    public void SpeedUpDownSimulation(float multiplier)
+    {
+        gamePaused = false;
+        float scale = multiplier <= 0f ? 1f : multiplier;
         Time.timeScale = scale;
     }
 

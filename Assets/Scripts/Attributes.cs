@@ -10,7 +10,7 @@ using UnityEngine;
 /// </remarks>
 public class Attributes
 {
-    readonly Genetics genes;
+    Genetics genes { get; }
 
     // Derived stats determined by genetics, traits and features
     float attack;
@@ -19,7 +19,7 @@ public class Attributes
     float attackSpeed;
     float weight;
     float energyRegenRate;
-    float size; // as radius in meters
+    public float size; // as radius in meters
 
     // Maximum stats derived from attributes
     public float maxHealth = 100f;
@@ -35,15 +35,17 @@ public class Attributes
         genes = genetics;
 
         // Use genes to determine base stats
-        maxHealth = 100f;
+        maxHealth *= genes.GetFactorValue<float>(GENOME.ATHLETICISM) + genes.GetFactorValue<float>(GENOME.SIZE);
         maxSaturation = 1f;
         maxEnergy = 100f;
 
         // Calculate all derived stats
+        size = genes.GetFactorValue<float>(GENOME.SIZE);
 
         // Assign current stats to maximum
         health = maxHealth;
         saturation = maxSaturation;
         energy = maxEnergy;
     }
+
 }
