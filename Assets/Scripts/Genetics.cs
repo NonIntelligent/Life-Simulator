@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq; // Used to cast enum into a list
+using System.Linq; // Used to get extra functions for collections
 
 public enum DNA
 {
@@ -17,13 +17,16 @@ public enum DNA
 public enum GENOME
 {
     // Governs Attributes
-    ATHLETICISM,
-    OFFENSE,
-    DEFENSE,
-    SIZE,
+    ATHLETICISM, // health, speed
+    OFFENSE, // attack
+    DEFENSE, // defense
+    SIZE, // size, health, speed
 
     // Governs Behaviour
-    AGRESSION,
+    AGRESSION, // initiating an attack
+    INTERVENTION, // assisting in a fight
+    COURAGE, // Used with agression when deciding to flee or fight in response to being attacked
+
 
     NUM_GENOMES
 }
@@ -31,16 +34,13 @@ public enum GENOME
 /// <summary>
 /// 
 /// </summary>
-/// Have an enum to determine if a gene is altered to be GREATER, POSITIVE, NEUTRAL, NEGATIVE, DISORDER
-/// Add mutation factor to base variablity of mutations for any given creature
-/// Mutation factor is determined per gene based on parents genes (lowers chance) and their activity levels (alters mutation range)
 public class Genetics
 {
     // Readonly dictionary used as a lookup table that supports multiple types
     static IReadOnlyDictionary<GENOME, GenomeConstant> genome_Values = null;
 
     // Arraylist to hold different types of GeneFactors
-    public ArrayList geneFactors = new ArrayList((int) GENOME.NUM_GENOMES);
+    ArrayList geneFactors = new ArrayList((int) GENOME.NUM_GENOMES);
 
     // Randomly generate all genes
     public Genetics()
@@ -76,6 +76,8 @@ public class Genetics
             GenerateFactorFromParents<float>(parents, 0.9f, GENOME.SIZE);
 
             GenerateFactorFromParents<float>(parents, 0.9f, GENOME.AGRESSION);
+            GenerateFactorFromParents<float>(parents, 0.9f, GENOME.INTERVENTION);
+            GenerateFactorFromParents<float>(parents, 0.9f, GENOME.COURAGE);
 
             return;
         }
@@ -87,6 +89,8 @@ public class Genetics
         GenerateFactorFromAllGenetics<float>(parents, 0.75f, grandParents, 0.2f, GENOME.SIZE);
 
         GenerateFactorFromAllGenetics<float>(parents, 0.75f, grandParents, 0.2f, GENOME.AGRESSION);
+        GenerateFactorFromAllGenetics<float>(parents, 0.75f, grandParents, 0.2f, GENOME.INTERVENTION);
+        GenerateFactorFromAllGenetics<float>(parents, 0.75f, grandParents, 0.2f, GENOME.COURAGE);
         
     }
 
@@ -203,6 +207,8 @@ public class Genetics
         geneFactors[genomeIndex] = GenerateFactor<T>(genome, finalDna, 0.1f);
     }
 
+
+
     void FillDnaArray(int[] output, DNA[] dnaList, float influenceA, DNA myDna) {
         int itemsToFillFromParents = (int)(influenceA * output.Length);
 
@@ -292,6 +298,8 @@ public class Genetics
         geneFactors.Add(GenerateRandomFactor<float>(GENOME.SIZE));
 
         geneFactors.Add(GenerateRandomFactor<float>(GENOME.AGRESSION));
+        geneFactors.Add(GenerateRandomFactor<float>(GENOME.INTERVENTION));
+        geneFactors.Add(GenerateRandomFactor<float>(GENOME.COURAGE));
 
         geneFactors.TrimToSize();
     }
@@ -302,9 +310,11 @@ public class Genetics
 
         temp[GENOME.ATHLETICISM] = new GenomeConstant(new float[]   { 0.5f, 0.8f, 1f, 1.18f, 1.4f }, 0.1f, 1, 1);
         temp[GENOME.OFFENSE] = new GenomeConstant(new float[]       { 5f, 10f, 15f, 23f, 30f }, 0.3f, 2, 2);
-        temp[GENOME.DEFENSE] = new GenomeConstant(new float[]       { 7f, 10f, 13f, 16f, 20f }, 0.3f, 2, 2);
-        temp[GENOME.SIZE] = new GenomeConstant(new float[]          { 0.1f, 0.3f, 0.5f, 0.8f, 1.2f }, 0.2f, 3, 3);
-        temp[GENOME.AGRESSION] = new GenomeConstant(new float[]     { 0.05f, 0.2f, 0.4f, 0.7f, 0.9f }, 0.5f, 4, 4);
+        temp[GENOME.DEFENSE] = new GenomeConstant(new float[]       { 7f, 10f, 13f, 18f, 24f }, 0.3f, 2, 2);
+        temp[GENOME.SIZE] = new GenomeConstant(new float[]          { 0.5f, 0.75f, 1.0f, 1.25f, 1.5f }, 0.2f, 3, 3);
+        temp[GENOME.AGRESSION] = new GenomeConstant(new float[]     { 0.05f, 0.15f, 0.3f, 0.5f, 0.8f }, 0.5f, 4, 4);
+        temp[GENOME.INTERVENTION] = new GenomeConstant(new float[]  { 0.05f, 0.2f, 0.5f, 0.8f, 1.0f }, 0.1f, 1, 1);
+        temp[GENOME.COURAGE] = new GenomeConstant(new float[]       { 0.1f, 0.3f, 0.5f, 0.7f, 0.9f }, 0.4f, 3, 3);
 
         return temp;
     }

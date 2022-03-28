@@ -27,7 +27,7 @@ public class CreatureAI : MonoBehaviour
     }
 
     IEnumerator RunAI() {
-        yield return new WaitForSeconds(coroutineDelay * Time.timeScale);
+        yield return new WaitForSeconds(coroutineDelay / Time.timeScale);
 
         moveRandomly();
 
@@ -35,8 +35,13 @@ public class CreatureAI : MonoBehaviour
     }
 
     void moveRandomly() {
+        // Check if destination has been reached
+        if (agent.destination == Vector3.positiveInfinity) return;
+        float distance = Vector3.Distance(transform.position, agent.destination);
+        if (distance > 1.5f) return;
+
         // Wander cooldown before selecting new position
-        moveCooldown -= coroutineDelay;
+        moveCooldown -= coroutineDelay * Time.timeScale;
         if (moveCooldown >= 0.0f) return;
 
         // Find position on navmesh to move to
@@ -46,7 +51,7 @@ public class CreatureAI : MonoBehaviour
             agent.SetDestination(hit.position);
         }
 
-        moveCooldown = 2.8f + Random.Range(-0.5f, 1f);
+        moveCooldown = (2.8f + Random.Range(-0.5f, 1f)) / Time.timeScale;
     }
 
     private void OnDrawGizmos() {
