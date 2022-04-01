@@ -24,6 +24,7 @@ public class Spawner : MonoBehaviour
     }
 
     public List<GameObject> spawnObjects(int numCreatures) {
+        objects.Clear();
         // Create creatures to manage
         Vector3 position = spawnCentre.position + Random.insideUnitSphere * spawnRadius;
         NavMeshHit ray;

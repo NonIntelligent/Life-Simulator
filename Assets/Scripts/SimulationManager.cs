@@ -11,6 +11,9 @@ public class SimulationManager : MonoBehaviour
     List<GameObject> creatures;
     bool gamePaused = false;
     public int numberToSpawn = 10;
+    public Material nature;
+    public Material blood;
+    public Material fruit;
 
     // Start is called before the first frame update
     void Start()
@@ -19,24 +22,50 @@ public class SimulationManager : MonoBehaviour
 
         numberToSpawn = Mathf.Max(1, numberToSpawn);
 
+        creatures = new List<GameObject>();
+
         // Create all creatures in family groups
         List<GameObject> natureCreatures = CreatureSpawner.spawnObjects(numberToSpawn);
         foreach (GameObject obj in natureCreatures)
         {
             var control = obj.GetComponent<CreatureControl>();
             control.family = CreatureFamily.NATURE;
+            var components = obj.GetComponentsInChildren<MeshRenderer>();
+            foreach (MeshRenderer mesh in components)
+            {
+                if (mesh.material.name == "phong1 (Instance)")
+                {
+                    mesh.material = nature;
+                }
+            }
         }
         List<GameObject> bloodcreatures = CreatureSpawner.spawnObjects(numberToSpawn);
         foreach (GameObject obj in bloodcreatures)
         {
             var control = obj.GetComponent<CreatureControl>();
             control.family = CreatureFamily.BLOOD;
+            var components = obj.GetComponentsInChildren<MeshRenderer>();
+            foreach (MeshRenderer mesh in components)
+            {
+                if (mesh.material.name == "phong1 (Instance)")
+                {
+                    mesh.material = blood;
+                }
+            }
         }
         List<GameObject> fruitCreatures = CreatureSpawner.spawnObjects(numberToSpawn);
         foreach (GameObject obj in fruitCreatures)
         {
             var control = obj.GetComponent<CreatureControl>();
             control.family = CreatureFamily.FRUIT;
+            var components = obj.GetComponentsInChildren<MeshRenderer>();
+            foreach (MeshRenderer mesh in components)
+            {
+                if (mesh.material.name == "phong1 (Instance)")
+                {
+                    mesh.material = fruit;
+                }
+            }
         }
 
         creatures.AddRange(natureCreatures);
