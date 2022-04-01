@@ -9,15 +9,39 @@ public class SimulationManager : MonoBehaviour
     Spawner CreatureSpawner;
 
     List<GameObject> creatures;
-
     bool gamePaused = false;
+    public int numberToSpawn = 10;
 
     // Start is called before the first frame update
     void Start()
     {
         CreatureSpawner = GetComponent<Spawner>();
 
-        creatures = CreatureSpawner.spawnObjects(6);
+        numberToSpawn = Mathf.Max(1, numberToSpawn);
+
+        // Create all creatures in family groups
+        List<GameObject> natureCreatures = CreatureSpawner.spawnObjects(numberToSpawn);
+        foreach (GameObject obj in natureCreatures)
+        {
+            var control = obj.GetComponent<CreatureControl>();
+            control.family = CreatureFamily.NATURE;
+        }
+        List<GameObject> bloodcreatures = CreatureSpawner.spawnObjects(numberToSpawn);
+        foreach (GameObject obj in bloodcreatures)
+        {
+            var control = obj.GetComponent<CreatureControl>();
+            control.family = CreatureFamily.BLOOD;
+        }
+        List<GameObject> fruitCreatures = CreatureSpawner.spawnObjects(numberToSpawn);
+        foreach (GameObject obj in fruitCreatures)
+        {
+            var control = obj.GetComponent<CreatureControl>();
+            control.family = CreatureFamily.FRUIT;
+        }
+
+        creatures.AddRange(natureCreatures);
+        creatures.AddRange(bloodcreatures);
+        creatures.AddRange(fruitCreatures);
     }
 
     // Update is called once per frame

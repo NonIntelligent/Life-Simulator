@@ -12,20 +12,26 @@ public class CreatureControl : MonoBehaviour
 
     Genetics[] grandParents = new Genetics[4];
     Genetics[] parents = new Genetics[2];
+    public CreatureFamily family { get; set; }
 
-    GameObject contextMenu;
-    GameObject contextCanvas;
+    // Reuse same ui menu but change the values
+    static GameObject contextMenu;
+    static GameObject contextCanvas;
 
     // Start is called before the first frame update
     void Start()
     {
+        family = CreatureFamily.NATURE;
         genetics = new Genetics();
         attributes = new Attributes(genetics);
         transform.localScale = new Vector3(1f, 1f, 1f) * attributes.size;
         coll = GetComponent<Collider>() as BoxCollider;
         agent = GetComponent<NavMeshAgent>();
+        if (contextMenu == null)
+        {
         contextMenu = GameObject.FindGameObjectWithTag("CreatureContext");
         contextCanvas = contextMenu.transform.Find("Canvas").gameObject;
+        }
     }
 
     // Update is called once per frame

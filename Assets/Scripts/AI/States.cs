@@ -1,13 +1,12 @@
 ﻿
-public enum ZombieStates
+public enum AIstates
 {
-    WANDER, PATROL, GUARD, CHASE,
-    ATTACK,
+    WANDER, RUN, RESOURCE_SEARCH, 
+    ATTACK, DEFEND, INTERVENE,
     DEATH,
 }
 
-public enum WaypointType
+public enum CreatureFamily
 {
-    CYCLIC, // A -> B -> C -> A...
-    RETRACE, // A -> B -> C -> B -> A...
+    NATURE, BLOOD, FRUIT
 }
