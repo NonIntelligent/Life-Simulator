@@ -7,7 +7,7 @@ public class Spawner : MonoBehaviour
 {
     public GameObject creature;
     public Transform spawnCentre;
-    public float spawnRadius = 50f;
+    public float spawnRadius = 60f;
 
     List<GameObject> objects;
 
