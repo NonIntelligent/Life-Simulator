@@ -9,6 +9,9 @@ public class Chonometer : MonoBehaviour
     public ProgressBar progress;
     public Text dayCount;
     public Text generationCount;
+    public static float secondsInDay {get; private set;}
+    public static int daysInGeneration {get; private set;}
+
     public float secondsPerDay = 60f;
     public int daysPerGeneration = 5;
 
@@ -19,6 +22,12 @@ public class Chonometer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (secondsPerDay <= 0f) secondsPerDay = 60f;
+        if (daysPerGeneration <= 0) daysPerGeneration = 5;
+
+        secondsInDay = secondsPerDay;
+        daysInGeneration = daysPerGeneration;
+
         secondsPerDay = Mathf.Clamp(secondsPerDay, 10f, 120f);
         updateDayText(day);
         updateGenerationText(generation);

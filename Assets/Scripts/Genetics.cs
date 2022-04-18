@@ -32,7 +32,7 @@ public enum GENOME
 }
 
 /// <summary>
-/// 
+/// Contains and generates all of the genetic information
 /// </summary>
 public class Genetics
 {
@@ -94,6 +94,7 @@ public class Genetics
         
     }
 
+    // Generates a random gene factor with a random dna value.
     GeneFactor<T> GenerateRandomFactor<T>(GENOME genome)
     {
         GenomeConstant genomeConstant = genome_Values[genome];
@@ -112,6 +113,7 @@ public class Genetics
 
     }
 
+    // Generates a gene factor using the supplied dna and varaiance values.
     GeneFactor<T> GenerateFactor<T>(GENOME genome, DNA dna, float variance = 0f)
     {
         GenomeConstant genomeConstant = genome_Values[genome];
@@ -130,6 +132,8 @@ public class Genetics
         return new GeneFactor<T>(val, dna);
     }
 
+    // Regenerates current gene factors by taking influence from the parent's genes.
+    // @param influence_1st The ratio between parents' and current gene to randomly select from.
     void GenerateFactorFromParents<T>(Genetics[] parents, float influence_1st, GENOME genome)
     {
         int genomeIndex = (int)genome;
@@ -164,6 +168,7 @@ public class Genetics
         geneFactors[genomeIndex] = GenerateFactor<T>(genome, finalDna, 0.1f);
     }
 
+    // Regenerates current gene factors by taking influence from the parents' and grandparents' genes.
     void GenerateFactorFromAllGenetics<T>(Genetics[] parents, float influence_1st, Genetics[] grandParents, float influence_2nd, GENOME genome)
     {
         int genomeIndex = (int)genome;
@@ -213,7 +218,7 @@ public class Genetics
         int itemsToFillFromParents = (int)(influenceA * output.Length);
 
         // Creates a weighted array based on the influence values. e.g. an influence value of 0.8 will fill 80% of the array with the parent's dna
-        // If influence is >= 1.0 then the genetics of the self are not considered.
+        // If influenceA is >= 1.0 then the genetics of the self are not considered.
         for (int i = 0; i < itemsToFillFromParents; i += 2)
         {
             output[i] = (int)dnaList[0];
@@ -234,7 +239,7 @@ public class Genetics
         int fillCap = totalItemsToFill < output.Length - 4 ? totalItemsToFill : output.Length;
 
         // Creates a weighted array based on the influence values. e.g. an influence value of 0.8 will fill 80% of the array with the parent's dna
-        // If influence is >= 1.0 then the genetics of the grandparents and self are not considered.
+        // If influenceA is >= 1.0 then the genetics of the grandparents and self are not considered.
         for (int i = 0; i < itemsToFillFromParents; i += 2)
         {
             output[i] = (int)dnaList[0];
@@ -256,6 +261,7 @@ public class Genetics
 
     }
 
+    // Calculates the mutation chance of a gene to return a new DNA value.
     DNA MutateGene(GenomeConstant constant, float experienceSum, int[] randomDnaRange, DNA randomChosen)
     {
         DNA result = randomChosen;

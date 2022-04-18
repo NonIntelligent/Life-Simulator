@@ -55,6 +55,43 @@ public class Attributes
         energy = maxEnergy;
     }
 
+    // A hacky way of updating the attributes from the UI
+    public void UpdateCurrentStats(int index, float value) {
+        switch (index) 
+        {
+                case 0: 
+                {
+                    health = value;
+                    break;
+                }
+                case 1: {
+                    saturation = value;
+                    break;
+                }
+            case 2: {
+                    energy = value;
+                    break;
+                }
+            default: {
+                    break;
+                }
+        }
+    }
 
+    // Gets the current and max stats for a given index to use with UI.
+    // If else statements use because c# is horrible with the switch-case abomination above
+    public float[] GetIndexStatLink(int index) {
+        if (index == 0) {
+            return new float[] { health, maxHealth };
+        }
+        else if (index == 1) {
+            return new float[] { saturation, maxSaturation };
+        }
+        else if (index == 2) {
+            return new float[] { energy, maxEnergy };
+        }
+
+        return new float[] {health, maxHealth};
+    }
 
 }

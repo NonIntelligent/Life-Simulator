@@ -3,19 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(FuzzyAI))]
 [RequireComponent(typeof(NavMeshAgent))]
 public class CreatureAI : MonoBehaviour
 {
     NavMeshAgent agent;
+    FuzzyAI fuzzyAI;
 
     float coroutineDelay = 0.5f;
     float moveCooldown = 2.8f;
-    float wanderRadius = 6.0f;
+    float wanderRadius = 24.0f;
 
     // Start is called before the first frame update
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        fuzzyAI = GetComponent<FuzzyAI>();
 
         StartCoroutine(RunAI());
     }
@@ -27,6 +30,10 @@ public class CreatureAI : MonoBehaviour
     }
 
     IEnumerator RunAI() {
+        while (Time.timeScale <= 0f) {
+            yield return new WaitForSeconds(0.2f);
+        }
+
         yield return new WaitForSeconds(coroutineDelay / Time.timeScale);
 
         moveRandomly();
@@ -42,12 +49,12 @@ public class CreatureAI : MonoBehaviour
 
         // Wander cooldown before selecting new position
         moveCooldown -= coroutineDelay * Time.timeScale;
-        if (moveCooldown >= 0.0f) return;
+        if (moveCooldown > 0f) return;
 
         // Find position on navmesh to move to
         Vector3 randomPoint = transform.position + Random.insideUnitSphere * wanderRadius;
         NavMeshHit hit;
-        if (NavMesh.SamplePosition(randomPoint, out hit, agent.height * 4, NavMesh.AllAreas)) {
+        if (NavMesh.SamplePosition(randomPoint, out hit, agent.height * wanderRadius, NavMesh.AllAreas)) {
             agent.SetDestination(hit.position);
         }
 
