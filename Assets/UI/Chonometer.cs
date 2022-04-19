@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 
 public class Chonometer : MonoBehaviour
 {
+    // Unity events
+    UnityEvent onNextGeneration;
+
     public ProgressBar progress;
     public Text dayCount;
     public Text generationCount;
@@ -31,6 +35,9 @@ public class Chonometer : MonoBehaviour
         secondsPerDay = Mathf.Clamp(secondsPerDay, 10f, 120f);
         updateDayText(day);
         updateGenerationText(generation);
+        onNextGeneration = new UnityEvent();
+
+        onNextGeneration.AddListener(GetComponent<SimulationManager>().SpawnNextGeneration);
     }
 
     // Update is called once per frame
@@ -60,6 +67,7 @@ public class Chonometer : MonoBehaviour
 
         generation++;
         updateGenerationText(generation);
+        onNextGeneration.Invoke();
     }
 
     void updateDayText(long value)

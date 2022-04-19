@@ -40,6 +40,7 @@ public class Spawner : MonoBehaviour
 
             GameObject obj = Instantiate(creature, ray.position, Quaternion.identity);
             objects.Add(obj);
+            navPointFound = false;
         }
 
         return objects;

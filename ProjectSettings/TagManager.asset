@@ -7,6 +7,8 @@ TagManager:
   - Creature
   - Action
   - CreatureContext
+  - StateIcons
+  - ResourceZone
   layers:
   - Default
   - TransparentFX

@@ -9,6 +9,11 @@ public struct CurvePair
 {
     public AnimationCurve curve;
     public float value;
+
+    public CurvePair(AnimationCurve curve, float value) {
+        this.curve = curve;
+        this.value = value;
+    }
 }
 
 /// <summary>
@@ -30,9 +35,17 @@ public static class Fuzzy
         return Mathf.Min(a.curve.Evaluate(a.value), b.curve.Evaluate(b.value));
     }
 
+    public static float AND(in float a, in CurvePair b) {
+        return Mathf.Min(a, b.curve.Evaluate(b.value));
+    }
+
     // The maximum result taken from the evaluation of both curves
     public static float OR(in CurvePair a, in CurvePair b) {
         return Mathf.Max(a.curve.Evaluate(a.value), b.curve.Evaluate(b.value));
+    }
+
+    public static float OR(in float a, in CurvePair b) {
+        return Mathf.Max(a, b.curve.Evaluate(b.value));
     }
 
     // The inverted result of the curve evaluation
@@ -46,6 +59,20 @@ public static class Fuzzy
 
     public static float N_OR(in CurvePair a, in CurvePair b) {
         return 1f - Mathf.Max(a.curve.Evaluate(a.value), b.curve.Evaluate(b.value));
+    }
+
+    // returns the greater of the two (defaults to a if they are the same)
+    public static CurvePair GREATER(in CurvePair a, in CurvePair b) {
+        float aEval = a.curve.Evaluate(a.value);
+        float bEval = b.curve.Evaluate(b.value);
+        return aEval >= bEval ? a : b;
+    }
+
+    // returns the lesser of the two (defaults to a if they are the same)
+    public static CurvePair LESSER(in CurvePair a, in CurvePair b) {
+        float aEval = a.curve.Evaluate(a.value);
+        float bEval = b.curve.Evaluate(b.value);
+        return aEval <= bEval ? a : b;
     }
 
     // XOR requires reconstruction of animation curves to create. Future work when needed

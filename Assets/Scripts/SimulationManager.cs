@@ -6,6 +6,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Spawner))]
 public class SimulationManager : MonoBehaviour
 {
+
     Spawner CreatureSpawner;
 
     List<GameObject> creatures;
@@ -76,14 +77,30 @@ public class SimulationManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        foreach(GameObject obj in creatures)
+        List<GameObject> objectToRemove = new List<GameObject>();
+
+        for (int i = 0; i < creatures.Count; i++)
         {
+            GameObject obj = creatures[i];
+            if (obj == null) {
+                objectToRemove.Add(obj);
+                continue;
+            }
             // Get components from creature and evaluate based on stats
             CreatureControl control = obj.GetComponent<CreatureControl>();
             FuzzyDefinitions fuzzy = obj.GetComponent<FuzzyDefinitions>();
 
             Attributes att = control.attributes;
         }
+
+        // remove null objects from list
+        foreach (GameObject obj in objectToRemove) {
+            creatures.Remove(obj);
+        }
+    }
+
+    public void SpawnNextGeneration() {
+        Debug.Log("Spawn stuff with the next generation");
     }
 
     public void PauseResumeGame()
