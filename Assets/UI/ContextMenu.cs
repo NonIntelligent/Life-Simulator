@@ -9,6 +9,7 @@ public class ContextMenu : MonoBehaviour
     GameObject canvasChild;
 
     GraphicRaycaster graphicRayCast;
+    public GraphicRaycaster[] otherCanvases;
     PointerEventData pointerEventData;
     EventSystem eventSystem;
 
@@ -30,7 +31,7 @@ public class ContextMenu : MonoBehaviour
         if (Input.GetMouseButtonDown(0)) {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hit, 200f, layerMask)) {
+            if (Physics.Raycast(ray, out hit, 300f, layerMask)) {
                 Origin = ray.origin;
                 Collision = hit.point;
 
@@ -52,13 +53,22 @@ public class ContextMenu : MonoBehaviour
             // Graphics raycast for UI to disable it
             pointerEventData = new PointerEventData(eventSystem);
             pointerEventData.position = Input.mousePosition;
+            int totalCount = 0;
 
             List<RaycastResult> results = new List<RaycastResult>();
 
             graphicRayCast.Raycast(pointerEventData, results);
+            totalCount += results.Count;
+
+            // Iterate through other graphic raycasters 
+            for (int g = 0; g < otherCanvases.Length; g++) {
+                results.Clear();
+                otherCanvases[g].Raycast(pointerEventData, results);
+                totalCount+= results.Count;
+            }
 
             // Hit nothing related to UI so disable canvas
-            if (results.Count == 0) { 
+            if (totalCount == 0) { 
                 canvasChild.SetActive(false);
             }
 

@@ -30,8 +30,8 @@ public class CreatureControl : MonoBehaviour
     {
         if (Time.timeScale <= 0f) return;
 
-        // Lose 50% of saturation per day
-        attributes.saturation -= 0.5f / (Chonometer.secondsInDay * Time.deltaTime);
+        // Lose 0.5 saturation per day
+        attributes.saturation -= 0.5f * (Time.deltaTime / Chonometer.secondsInDay);
     }
 
     public void UpdateSpeed(float speed) {
