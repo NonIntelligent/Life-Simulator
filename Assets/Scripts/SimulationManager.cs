@@ -83,14 +83,6 @@ public class SimulationManager : MonoBehaviour
             FuzzyDefinitions fuzzy = obj.GetComponent<FuzzyDefinitions>();
 
             Attributes att = control.attributes;
-            float[] values = fuzzy.EvaluateHealth(att.health / att.maxHealth);
-
-            //Debug.Log("Healthy: " + values[0] + " Hurt: " + values[1] + " Critical: " + values[2]);
-
-            if (values[0] > values[1]) control.UpdateSpeed(20f);
-            else if (values[1] > values[2]) control.UpdateSpeed(5f);
-            else if (values[2] > values[1]) control.UpdateSpeed(1f);
-
         }
     }
 
