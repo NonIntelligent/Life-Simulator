@@ -973,7 +973,7 @@ MonoBehaviour:
   dayCount: {fileID: 247476991}
   generationCount: {fileID: 1822272010}
   secondsPerDay: 30
-  daysPerGeneration: 5
+  daysPerGeneration: 3
 --- !u!1 &774586044
 GameObject:
   m_ObjectHideFlags: 0

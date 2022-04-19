@@ -100,7 +100,73 @@ public class SimulationManager : MonoBehaviour
     }
 
     public void SpawnNextGeneration() {
-        Debug.Log("Spawn stuff with the next generation");
+        List<GameObject> familyNature = new List<GameObject>();
+        List<GameObject> familyFruit = new List<GameObject>();
+        List<GameObject> familyBlood = new List<GameObject>();
+        List<GameObject> nextGeneration = new List<GameObject> ();
+
+        // Sort lists by family
+        foreach (GameObject obj in creatures) {
+            if (obj == null) continue;
+
+            var control = obj.GetComponent<CreatureControl>();
+
+            if(control.family == CreatureFamily.FRUIT) {
+                familyFruit.Add(obj);
+            }
+            else if (control.family == CreatureFamily.BLOOD) {
+                familyBlood.Add(obj);
+            }
+            else familyNature.Add(obj);
+        }
+
+        nextGeneration.AddRange(generateOffspring(familyNature));
+        nextGeneration.AddRange(generateOffspring(familyFruit));
+        nextGeneration.AddRange(generateOffspring(familyBlood));
+
+        // Destroy all parent creatures
+        foreach (GameObject obj in creatures) {
+            if(obj == null) continue;
+
+            Destroy(obj);
+        }
+
+        creatures.Clear();
+
+        creatures.AddRange(nextGeneration);
+    }
+
+    List<GameObject> generateOffspring(List<GameObject> candidates) {
+        List<GameObject> offspring = new List<GameObject>();
+
+        // Generate offspring using genetics of parents
+        for (int i = 1; i < candidates.Count; i += 2) {
+            var parent1 = candidates[i].GetComponent<CreatureControl>();
+            var parent2 = candidates[i - 1].GetComponent<CreatureControl>();
+
+            Genetics[] parents = { parent1.GetGenetics(), parent2.GetGenetics() };
+
+            Genetics[] grandparents = { parent1.GetParents()[0], parent1.GetParents()[1], parent2.GetParents()[0], parent2.GetParents()[1] };
+
+            // Check if grandparents contain any null genetics
+            for (int gp = 0; gp < 4; gp++) {
+                if (grandparents[gp] == null) {
+                    grandparents = null;
+                    break;
+                }
+            }
+
+            var newborns = CreatureSpawner.spawnObjects(Random.Range(0, 4));
+
+            foreach (GameObject newborn in newborns) {
+                newborn.GetComponent<CreatureControl>().generateGenetics(parents, grandparents);
+            }
+
+            offspring.AddRange(newborns);
+
+        }
+
+        return offspring;
     }
 
     public void PauseResumeGame()

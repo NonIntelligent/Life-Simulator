@@ -29,9 +29,12 @@ public class CreatureControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        genetics = new Genetics();
-        attributes = new Attributes(genetics);
-        transform.localScale = new Vector3(1f, 1f, 1f) * attributes.size;
+        if (genetics == null) {
+            genetics = new Genetics();
+            attributes = new Attributes(genetics);
+            transform.localScale = new Vector3(1f, 1f, 1f) * attributes.size;
+        }
+
         coll = GetComponent<Collider>() as BoxCollider;
         agent = GetComponent<NavMeshAgent>();
         creatureAI = GetComponent<CreatureAI>();
@@ -56,6 +59,15 @@ public class CreatureControl : MonoBehaviour
         if (attributes.saturation >= 0.3f) attributes.restoreHealth(25f * (timePassed));
 
         if (attributes.saturation <= 0f) die();
+    }
+
+    public void generateGenetics(Genetics[] parents, Genetics[] grandParents = null) {
+        this.parents = parents;
+        this.grandParents = grandParents;
+
+        genetics = new Genetics(parents, grandParents);
+        attributes = new Attributes(genetics);
+        transform.localScale = new Vector3(1f, 1f, 1f) * attributes.size;
     }
 
     void setupEvents() {
@@ -94,6 +106,14 @@ public class CreatureControl : MonoBehaviour
     void die() {
         creatureAI.changeState(AIstates.DEATH);
         Destroy(gameObject);
+    }
+
+    public Genetics GetGenetics() {
+        return genetics;
+    }
+
+    public Genetics[] GetParents() {
+        return parents;
     }
 
 }

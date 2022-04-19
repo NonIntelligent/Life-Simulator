@@ -95,6 +95,8 @@ public class CreatureAI : MonoBehaviour
         GENOME genome = GENOME.AGRESSION;
 
         foreach (CreatureControl opponent in opponents) {
+            if (opponent == null) continue;
+
             // Fuzzy logic based on agression gene and distance
             CurvePair attackAgression = new CurvePair(logic.attack_creature, logic.genetics.GetFactor<float>(genome).value);
             float distanceRemap = Vector3.Distance(transform.position, opponent.transform.position);

@@ -152,7 +152,7 @@ public class Genetics
         FillDnaArray(randomRangeList, dnaList, influence_1st, myDna);
 
         // Choose gene from list randomly
-        DNA randomDna = (DNA)Random.Range(0, randomRangeList.Length);
+        DNA randomDna = (DNA) randomRangeList[Random.Range(0, randomRangeList.Length)];
 
         // Sum experience from parents and is modified by influence and a 30% bonus to account for no grandparents
         float experienceSum = (parentFactors[0].experience + parentFactors[1].experience) * influence_1st * 1.3f;
@@ -195,7 +195,7 @@ public class Genetics
         FillDnaArray(randomRangeList, dnaList, influence_1st, influence_2nd, myDna);
 
         // Choose gene from list randomly
-        DNA randomDna = (DNA)Random.Range(0, randomRangeList.Length);
+        DNA randomDna = (DNA)randomRangeList[Random.Range(0, randomRangeList.Length)];
 
         // Sum experience from parents and is modified by influence
         float experienceSum = (parentFactors[0].experience + parentFactors[1].experience) * influence_1st + (parentFactors[2].experience
