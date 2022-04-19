@@ -9,6 +9,7 @@ public class FuzzyDefinitions : MonoBehaviour
 {
     readonly Attributes attributes;
 
+    // Attribute curves
     public AnimationCurve health_Healthy;
     public AnimationCurve health_Hurt;
     public AnimationCurve health_Critical;
@@ -18,6 +19,10 @@ public class FuzzyDefinitions : MonoBehaviour
 
     public AnimationCurve energy_priority;
 
+    // Behaviour curves
+    public AnimationCurve search_food;
+    public AnimationCurve attack_creature;
+    public AnimationCurve run_away;
 
     void Start()
     {
