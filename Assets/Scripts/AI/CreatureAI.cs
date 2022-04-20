@@ -26,6 +26,7 @@ public class CreatureAI : MonoBehaviour
     float wanderRadius = 24.0f;
     float stateChangeLockout = 1f;
     float attackTimeout = 7f;
+    float defendTimeout = 7f;
     public float vicinityRadius = 18f;
 
     // Start is called before the first frame update
@@ -84,6 +85,9 @@ public class CreatureAI : MonoBehaviour
         // Change to searching for food
         bool food = determineFoodSearchState();
 
+        // Defend transition
+        bool defend = escapeFromDefendingState();
+
         // Slime is doing nothing so it should wander
         if (currentState == AIstates.IDLE) {
             changeState(AIstates.WANDER);
@@ -141,6 +145,19 @@ public class CreatureAI : MonoBehaviour
         return false;
     }
 
+    bool escapeFromDefendingState() {
+        if (currentState == AIstates.DEFEND) {
+            defendTimeout -= coroutineDelay / Time.timeScale;
+            if (defendTimeout <= 0f) {
+                changeState(AIstates.IDLE);
+                defendTimeout = 7f;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     // Perform actions based on states and fuzzy logic
     void actionOnState() {
         if (currentState == AIstates.WANDER) {
@@ -154,9 +171,16 @@ public class CreatureAI : MonoBehaviour
                 return;
             }
             agent.SetDestination(targetCreature.transform.position);
+
+            if (checkIfReachedDestination(3f)) {
+                targetCreature.takeDamage(control);
+                attackTimeout += (coroutineDelay / Time.timeScale) * 1.5f;
+            }
+
             attackTimeout -= coroutineDelay / Time.timeScale;
         }
         else if (currentState == AIstates.DEFEND) {
+            moveCooldown = 0.1f;
             moveRandomly();
         }
         else if (currentState == AIstates.RESOURCE_SEARCH) {
@@ -235,6 +259,10 @@ public class CreatureAI : MonoBehaviour
         currentState = state;
         updateIconState(state);
         stateChangeLockout = 1f;
+    }
+
+    public void resetDefendCooldown(float time) {
+        defendTimeout = time;
     }
 
 }

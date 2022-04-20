@@ -59,6 +59,8 @@ public class CreatureControl : MonoBehaviour
         if (attributes.saturation >= 0.3f) attributes.restoreHealth(25f * (timePassed));
 
         if (attributes.saturation <= 0f) die();
+
+        if (attributes.health <= 0f) die();
     }
 
     public void generateGenetics(Genetics[] parents, Genetics[] grandParents = null) {
@@ -81,7 +83,7 @@ public class CreatureControl : MonoBehaviour
         agent.acceleration = speed / 2f;
     }
 
-    public void dealDamage(CreatureControl opponent) {
+    public void takeDamage(CreatureControl opponent) {
         float damage = opponent.attributes.attack - attributes.defense;
         damage = Mathf.Max(damage, 3f);
 
@@ -94,6 +96,7 @@ public class CreatureControl : MonoBehaviour
         // Change state to defending if you recieved damage but did not initiate the attack
         if (currentState != AIstates.ATTACK && currentState != AIstates.DEFEND) {
             creatureAI.changeState(AIstates.DEFEND);
+            creatureAI.resetDefendCooldown(7f);
         }
 
         // Fills hunger for opponent on death
